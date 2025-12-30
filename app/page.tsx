@@ -1,65 +1,73 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-screen flex-col">
+      <header className="flex h-16 items-center justify-between border-b px-6 lg:px-12">
+        <div className="text-2xl font-bold text-blue-600">MicroAccount</div>
+        <nav className="hidden gap-6 md:flex">
+          <Link href="#features" className="text-sm font-medium hover:underline">คุณสมบัติ</Link>
+          <Link href="#pricing" className="text-sm font-medium hover:underline">ราคา</Link>
+          <Link href="#contact" className="text-sm font-medium hover:underline">ติดต่อเรา</Link>
+        </nav>
+        <div className="flex gap-4">
+          <Link href="/dashboard">
+            <Button variant="outline">เข้าสู่ระบบ</Button>
+          </Link>
+          <Link href="/dashboard">
+            <Button>เริ่มต้นใช้งานฟรี</Button>
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      <main className="flex-1">
+        <section className="bg-slate-50 py-20 text-center">
+          <div className="container mx-auto px-4">
+            <h1 className="mb-6 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              ระบบบัญชีที่เข้าใจ <span className="text-blue-600">SME ไทย</span> มากที่สุด
+            </h1>
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
+              จัดการใบวางบิล ออกใบเสร็จ และดูงบการเงินได้ง่ายๆ บนคลาวด์ ปลอดภัย รวดเร็ว ครบจบในที่เดียว
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link href="/dashboard">
+                <Button size="lg" className="h-12 px-8 text-lg">ทดลองใช้งานฟรี</Button>
+              </Link>
+              <Link href="#demo">
+                <Button size="lg" variant="outline" className="h-12 px-8 text-lg">ดูวิดีโอสาธิต</Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="py-20">
+          <div className="container mx-auto px-4">
+            <h2 className="mb-12 text-center text-3xl font-bold">ฟีเจอร์ที่ช่วยให้ธุรกิจคุณเติบโต</h2>
+            <div className="grid gap-8 md:grid-cols-3">
+              <div className="rounded-lg border p-6 shadow-sm">
+                <div className="mb-4 text-4xl">📊</div>
+                <h3 className="mb-2 text-xl font-bold">Dashboard อัจฉริยะ</h3>
+                <p className="text-muted-foreground">เห็นภาพรวมกระแสเงินสด กำไร-ขาดทุน ได้แบบ Real-time ตัดสินใจธุรกิจได้ทันที</p>
+              </div>
+              <div className="rounded-lg border p-6 shadow-sm">
+                <div className="mb-4 text-4xl">📑</div>
+                <h3 className="mb-2 text-xl font-bold">เอกสารครบครัน</h3>
+                <p className="text-muted-foreground">ออกใบเสนอราคา ใบแจ้งหนี้ ใบเสร็จรับเงิน และใบหัก ณ ที่จ่ายถูกต้องตามมาตรฐาน</p>
+              </div>
+              <div className="rounded-lg border p-6 shadow-sm">
+                <div className="mb-4 text-4xl">📱</div>
+                <h3 className="mb-2 text-xl font-bold">ใช้งานได้ทุกที่</h3>
+                <p className="text-muted-foreground">รองรับการใช้งานผ่านมือถือ แท็บเล็ต และคอมพิวเตอร์ ทำงานได้จากทุกมุมโลก</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer className="border-t py-12 text-center text-sm text-muted-foreground">
+        © {new Date().getFullYear()} MicroAccount by WebShardow. All rights reserved.
+      </footer>
     </div>
   );
 }
