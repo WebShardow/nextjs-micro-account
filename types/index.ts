@@ -4,6 +4,25 @@ export type Profile = {
     id: string;
     email: string;
     role: UserRole;
+    points: number;
+    mustChangePassword: boolean;
+    lastActivityAt: Date;
+    createdAt: Date;
+};
+
+export type SystemSettings = {
+    id: string;
+    key: string;
+    value: string;
+    updatedAt: Date;
+};
+
+export type Announcement = {
+    id: string;
+    title: string;
+    content: string;
+    isActive: boolean;
+    authorId: string;
     createdAt: Date;
 };
 

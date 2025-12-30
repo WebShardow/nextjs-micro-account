@@ -65,7 +65,7 @@ export default function LoginPage() {
             }
 
             toast.success("เข้าสู่ระบบสำเร็จ");
-            router.push("/");
+            router.push("/dashboard");
             router.refresh();
         } catch (error) {
             toast.error("เกิดข้อผิดพลาดบางอย่าง");

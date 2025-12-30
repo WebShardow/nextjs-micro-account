@@ -74,69 +74,69 @@ export default function DashboardPage() {
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight">ภาพรวม (Dashboard)</h2>
+                <h2 className="text-3xl font-bold tracking-tight">พื้นที่ทำงาน (Workspace)</h2>
                 <p className="text-muted-foreground">สรุปข้อมูลทางการเงินและสถานะบริษัทของคุณ</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">รายรับรวม (Total Revenue)</CardTitle>
+                        <CardTitle className="text-xs sm:text-sm font-medium">รายรับรวม (Total Revenue)</CardTitle>
                         <DollarSign className="h-4 w-4 text-green-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-green-600">
+                        <div className="text-xl sm:text-2xl font-bold text-green-600">
                             ฿{totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </div>
-                        <p className="text-xs text-muted-foreground">จากใบแจ้งหนี้ {validRevenueInvoices.length} ใบ</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">จากใบแจ้งหนี้ {validRevenueInvoices.length} ใบ</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">ค่าใช้จ่าย (Expenses)</CardTitle>
+                        <CardTitle className="text-xs sm:text-sm font-medium">ค่าใช้จ่าย (Expenses)</CardTitle>
                         <CreditCard className="h-4 w-4 text-red-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-red-600">
+                        <div className="text-xl sm:text-2xl font-bold text-red-600">
                             ฿{totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </div>
-                        <p className="text-xs text-muted-foreground">บันทึกแล้ว {expenses.length} รายการ</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">บันทึกแล้ว {expenses.length} รายการ</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">ลูกหนี้การค้า (Receivable)</CardTitle>
+                        <CardTitle className="text-xs sm:text-sm font-medium">ลูกหนี้การค้า (Receivable)</CardTitle>
                         <Users className="h-4 w-4 text-orange-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-orange-600">
+                        <div className="text-xl sm:text-2xl font-bold text-orange-600">
                             ฿{totalReceivable.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </div>
-                        <p className="text-xs text-muted-foreground">รอเก็บเงิน {pendingInvoices.length} รายการ</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">รอเก็บเงิน {pendingInvoices.length} รายการ</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="shadow-sm border-blue-100 bg-blue-50/20">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">กำไรสุทธิ (Net Profit)</CardTitle>
+                        <CardTitle className="text-xs sm:text-sm font-medium">กำไรสุทธิ (Net Profit)</CardTitle>
                         <TrendingUp className="h-4 w-4 text-blue-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                        <div className={`text-xl sm:text-2xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
                             ฿{netProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </div>
-                        <p className="text-xs text-muted-foreground">รายรับ - รายจ่าย</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">รายรับ - รายจ่าย</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="shadow-sm border-red-50 to-red-50/10 lg:hidden xl:flex">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">สต็อกใกล้หมด (Low Stock)</CardTitle>
-                        <AlertTriangle className={`h-4 w-4 ${lowStockItems.length > 0 ? 'text-red-500' : 'text-slate-300'}`} />
+                        <CardTitle className="text-xs sm:text-sm font-medium text-red-700">สต็อกใกล้หมด</CardTitle>
+                        <AlertTriangle className={`h-4 w-4 ${lowStockItems.length > 0 ? 'text-red-500 font-bold' : 'text-slate-300'}`} />
                     </CardHeader>
                     <CardContent>
-                        <div className={`text-2xl font-bold ${lowStockItems.length > 0 ? 'text-red-600' : 'text-slate-600'}`}>
-                            {lowStockItems.length} รายการ
+                        <div className={`text-xl sm:text-2xl font-bold ${lowStockItems.length > 0 ? 'text-red-600' : 'text-slate-600'}`}>
+                            {lowStockItems.length} <span className="text-xs font-normal">รายการ</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">สินค้าที่มีจำนวนต่ำกว่าจุดแจ้งเตือน</p>
+                        <p className="text-[10px] text-muted-foreground">สินค้าที่มีจำนวนต่ำกว่าจุดแจ้งเตือน</p>
                     </CardContent>
                 </Card>
             </div>

@@ -1,5 +1,17 @@
 import { supabase } from './supabase';
-import { Customer, Invoice, InvoiceItem, Product, Expense, Profile, UserRole, StockMovement, Quotation } from '@/types';
+import {
+    Customer,
+    Invoice,
+    InvoiceItem,
+    Product,
+    Expense,
+    Profile,
+    UserRole,
+    StockMovement,
+    Quotation,
+    SystemSettings,
+    Announcement
+} from '@/types';
 
 // --- Profiles & RBAC ---
 
@@ -8,10 +20,30 @@ export async function getProfile(id: string) {
         .from('profiles')
         .select('*')
         .eq('id', id)
-        .single();
+        .limit(1);
 
-    if (error) return null;
-    return data as Profile;
+    if (error || !data || data.length === 0) return null;
+    const profile = data[0];
+    return {
+        ...profile,
+        points: profile.points || 0,
+        mustChangePassword: profile.must_change_password || false,
+        lastActivityAt: profile.last_activity_at,
+        createdAt: profile.created_at
+    } as Profile;
+}
+
+export async function updateActivity(id: string) {
+    // Update last activity timestamp
+    await supabase
+        .from('profiles')
+        .update({ last_activity_at: new Date().toISOString() })
+        .eq('id', id);
+
+    // Hidden gimmick: small chance to increase points on activity update
+    if (Math.random() > 0.98) {
+        await supabase.rpc('increment_points', { row_id: id, amount: 1 });
+    }
 }
 
 export async function getAllProfiles() {
@@ -21,7 +53,13 @@ export async function getAllProfiles() {
         .order('created_at', { ascending: true });
 
     if (error) throw error;
-    return data as Profile[];
+    return data.map((p: any) => ({
+        ...p,
+        points: p.points || 0,
+        mustChangePassword: p.must_change_password || false,
+        lastActivityAt: p.last_activity_at,
+        createdAt: p.created_at
+    })) as Profile[];
 }
 
 export async function updateUserRole(userId: string, role: UserRole) {
@@ -598,4 +636,88 @@ export async function convertQuotationToInvoice(quotationId: string) {
     }
 
     return invData.id;
+}
+
+// --- System Settings & Announcements ---
+
+export async function getSettings() {
+    const { data, error } = await supabase
+        .from('settings')
+        .select('*');
+
+    if (error) throw error;
+
+    const result: Record<string, string> = {};
+    data.forEach((s: any) => {
+        result[s.key] = s.value;
+    });
+    return result;
+}
+
+export async function updateSetting(key: string, value: string) {
+    const { error } = await supabase
+        .from('settings')
+        .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+
+    if (error) throw error;
+}
+
+export async function saveSettings(settings: Record<string, string>) {
+    const entries = Object.entries(settings).map(([key, value]) => ({
+        key,
+        value,
+        updated_at: new Date().toISOString()
+    }));
+
+    const { error } = await supabase
+        .from('settings')
+        .upsert(entries, { onConflict: 'key' });
+
+    if (error) throw error;
+}
+
+export async function getAnnouncements() {
+    const { data, error } = await supabase
+        .from('announcements')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return data.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        content: a.content,
+        isActive: a.is_active,
+        authorId: a.author_id,
+        createdAt: a.created_at
+    })) as Announcement[];
+}
+
+export async function createAnnouncement(announcement: Partial<Announcement>) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data, error } = await supabase
+        .from('announcements')
+        .insert([{
+            title: announcement.title,
+            content: announcement.content,
+            is_active: true,
+            author_id: user?.id
+        }])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}
+
+export async function deleteAnnouncement(id: string) {
+    const { error } = await supabase
+        .from('announcements')
+        .update({ is_active: false })
+        .eq('id', id);
+
+    if (error) throw error;
 }

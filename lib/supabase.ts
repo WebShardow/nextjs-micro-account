@@ -9,6 +9,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(
-    supabaseUrl || '', // Fallback to empty string to prevent crash during build, but will fail at runtime if missing
-    supabaseAnonKey || ''
+    supabaseUrl || '',
+    supabaseAnonKey || '',
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
 );

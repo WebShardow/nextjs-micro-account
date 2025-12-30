@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
     LayoutDashboard,
@@ -8,7 +10,10 @@ import {
     Settings,
     PieChart,
     LogOut,
-    Shield
+    Shield,
+    Database,
+    BookOpen,
+    Tags
 } from "lucide-react";
 import { useProfile } from "@/hooks/use-profile";
 
@@ -30,7 +35,7 @@ export function Sidebar() {
                             className="flex items-center gap-3 rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-800"
                         >
                             <LayoutDashboard size={20} />
-                            ภาพรวม (Dashboard)
+                            พื้นที่ทำงาน (Workspace)
                         </Link>
                     </li>
                     <li>
@@ -88,15 +93,26 @@ export function Sidebar() {
                         </Link>
                     </li>
                     {profile?.role === 'super_admin' && (
-                        <li>
-                            <Link
-                                href="/admin"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white border border-slate-700/50 mt-4 bg-slate-800/20"
-                            >
-                                <Shield size={20} className="text-yellow-500" />
-                                จัดการผู้ใช้งาน (Admin)
-                            </Link>
-                        </li>
+                        <>
+                            <li>
+                                <Link
+                                    href="/admin"
+                                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white border border-slate-700/50 mt-4 bg-slate-800/20"
+                                >
+                                    <Shield size={20} className="text-yellow-500" />
+                                    จัดการผู้ใช้งาน (Admin)
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/admin/backup"
+                                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                                >
+                                    <Database size={20} className="text-blue-400" />
+                                    สำรอง/กู้คืน (Backup)
+                                </Link>
+                            </li>
+                        </>
                     )}
                 </ul>
             </nav>
@@ -107,6 +123,20 @@ export function Sidebar() {
                 >
                     <Settings size={20} />
                     ตั้งค่า (Settings)
+                </Link>
+                <Link
+                    href="/manual"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                >
+                    <BookOpen size={20} />
+                    คู่มือการใช้งาน (Manual)
+                </Link>
+                <Link
+                    href="/pricing"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+                >
+                    <Tags size={20} />
+                    แผนราคา (Pricing)
                 </Link>
                 <div onClick={async () => {
                     const { supabase } = await import('@/lib/supabase');
