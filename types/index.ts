@@ -14,8 +14,20 @@ export type Product = {
     name: string;
     sku?: string;
     price: number;
-    unit: string; // ชิ้น, กล่อง, ครั้ง
+    unit: string;
     description?: string;
+    stockQuantity: number;
+    minStockLevel?: number;
+};
+
+export type StockMovement = {
+    id: string;
+    productId: string;
+    type: 'in' | 'out' | 'adjustment';
+    quantity: number;
+    referenceId?: string;
+    notes?: string;
+    createdAt: Date;
 };
 
 export type InvoiceStatus = 'draft' | 'issued' | 'paid' | 'overdue' | 'cancelled';

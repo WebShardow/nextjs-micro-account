@@ -63,7 +63,16 @@ export async function getProducts() {
         throw error;
     }
 
-    return data as Product[];
+    return data.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        sku: p.sku,
+        price: p.price,
+        unit: p.unit,
+        description: p.description,
+        stockQuantity: p.stock_quantity || 0,
+        minStockLevel: p.min_stock_level || 0,
+    })) as Product[];
 }
 
 export async function createProduct(product: Partial<Product>) {
@@ -75,7 +84,9 @@ export async function createProduct(product: Partial<Product>) {
             price: product.price,
             unit: product.unit,
             description: product.description,
-            category: 'general' // Default category
+            stock_quantity: product.stockQuantity || 0,
+            min_stock_level: product.minStockLevel || 0,
+            category: 'general'
         }])
         .select()
         .single();
@@ -201,6 +212,7 @@ export async function createInvoice(invoice: Invoice) {
     // 2. Insert Items
     const itemsToInsert = invoice.items.map(item => ({
         invoice_id: newInvoiceId,
+        product_id: item.productId,
         description: item.description,
         quantity: item.quantity,
         price: item.price,
@@ -221,7 +233,52 @@ export async function createInvoice(invoice: Invoice) {
         throw itemsError;
     }
 
+    // 3. Stock update logic
+    for (const item of invoice.items) {
+        if (item.productId) {
+            await recordStockMovement({
+                productId: item.productId,
+                type: 'out',
+                quantity: item.quantity,
+                referenceId: newInvoiceId,
+                notes: `ขายตามใบแจ้งหนี้ #${invoice.number}`
+            });
+        }
+    }
+
     return newInvoiceId;
+}
+
+export async function recordStockMovement(movement: Partial<StockMovement>) {
+    // 1. Insert Movement
+    const { error: moveError } = await supabase
+        .from('stock_movements')
+        .insert([{
+            product_id: movement.productId,
+            type: movement.type,
+            quantity: movement.quantity,
+            reference_id: movement.referenceId,
+            notes: movement.notes
+        }]);
+
+    if (moveError) throw moveError;
+
+    // 2. Update Product Stock
+    const multiplier = movement.type === 'in' ? 1 : (movement.type === 'out' ? -1 : 0);
+
+    if (multiplier !== 0) {
+        const { error: updateError } = await supabase.rpc('increment_stock', {
+            row_id: movement.productId,
+            count: (movement.quantity || 0) * multiplier
+        });
+
+        // If RPC fails (e.g. not created yet), fallback to manual update (less atomic)
+        if (updateError) {
+            const { data: currentProd } = await supabase.from('products').select('stock_quantity').eq('id', movement.productId).single();
+            const newStock = (currentProd?.stock_quantity || 0) + ((movement.quantity || 0) * multiplier);
+            await supabase.from('products').update({ stock_quantity: newStock }).eq('id', movement.productId);
+        }
+    }
 }
 
 export async function getInvoiceById(id: string) {
@@ -255,6 +312,7 @@ export async function getInvoiceById(id: string) {
         createdAt: new Date(data.created_at),
         items: data.invoice_items.map((item: any) => ({
             id: item.id,
+            productId: item.product_id,
             description: item.description,
             quantity: item.quantity,
             price: item.price,
@@ -317,6 +375,7 @@ export async function createQuotation(quotation: any) {
 
     const itemsToInsert = quotation.items.map((item: any) => ({
         quotation_id: newQuotationId,
+        product_id: item.productId,
         description: item.description,
         quantity: item.quantity,
         price: item.price,
@@ -366,6 +425,7 @@ export async function getQuotationById(id: string) {
         createdAt: new Date(data.created_at),
         items: data.quotation_items.map((item: any) => ({
             id: item.id,
+            productId: item.product_id,
             description: item.description,
             quantity: item.quantity,
             price: item.price,
@@ -435,6 +495,21 @@ export async function convertQuotationToInvoice(quotationId: string) {
         .from('quotations')
         .update({ status: 'invoiced' })
         .eq('id', quotationId);
+
+    // 6. Deduct Stock
+    for (const item of quotation.quotation_items) {
+        // We need to know the productId. If quotation_items has it.
+        // Let's assume quotation_items has product_id.
+        if (item.product_id) {
+            await recordStockMovement({
+                productId: item.product_id,
+                type: 'out',
+                quantity: item.quantity,
+                referenceId: invData.id,
+                notes: `ขายตามใบแจ้งหนี้ #${invoiceNumber} (จากใบเสนอราคา #${quotation.number})`
+            });
+        }
+    }
 
     return invData.id;
 }

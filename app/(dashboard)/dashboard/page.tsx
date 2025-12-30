@@ -2,28 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, CreditCard, Users, TrendingUp, Loader2 } from "lucide-react";
-import { getInvoices, getExpenses } from "@/lib/data-service";
-import { Invoice, Expense } from "@/types";
+import { getInvoices, getExpenses, getProducts } from "@/lib/data-service";
+import { Invoice, Expense, Product } from "@/types";
+import { DollarSign, CreditCard, Users, TrendingUp, Loader2, AlertTriangle, Box } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 
 export default function DashboardPage() {
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [expenses, setExpenses] = useState<Expense[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function loadData() {
             setLoading(true);
             try {
-                // Load both in parallel
-                const [invData, expData] = await Promise.all([
+                // Load all in parallel
+                const [invData, expData, prodData] = await Promise.all([
                     getInvoices(),
-                    getExpenses()
+                    getExpenses(),
+                    getProducts()
                 ]);
                 setInvoices(invData);
                 setExpenses(expData);
+                setProducts(prodData);
             } catch (error) {
                 console.error("Dashboard load error", error);
             } finally {
@@ -50,6 +53,9 @@ export default function DashboardPage() {
 
     // 4. Net Profit (กำไรสุทธิ) - Simple calc
     const netProfit = totalRevenue - totalExpenses;
+
+    // 5. Low Stock Count
+    const lowStockItems = products.filter(p => p.stockQuantity <= (p.minStockLevel || 0));
 
     // Recent Invoices (Top 5)
     // Assuming API sort, but re-sorting here to be safe if API changes
@@ -121,6 +127,18 @@ export default function DashboardPage() {
                         <p className="text-xs text-muted-foreground">รายรับ - รายจ่าย</p>
                     </CardContent>
                 </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">สต็อกใกล้หมด (Low Stock)</CardTitle>
+                        <AlertTriangle className={`h-4 w-4 ${lowStockItems.length > 0 ? 'text-red-500' : 'text-slate-300'}`} />
+                    </CardHeader>
+                    <CardContent>
+                        <div className={`text-2xl font-bold ${lowStockItems.length > 0 ? 'text-red-600' : 'text-slate-600'}`}>
+                            {lowStockItems.length} รายการ
+                        </div>
+                        <p className="text-xs text-muted-foreground">สินค้าที่มีจำนวนต่ำกว่าจุดแจ้งเตือน</p>
+                    </CardContent>
+                </Card>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -155,31 +173,27 @@ export default function DashboardPage() {
                     </CardContent>
                 </Card>
                 <Card className="col-span-3">
-                    <CardHeader>
-                        <CardTitle>ใบแจ้งหนี้ล่าสุด</CardTitle>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle>สินค้าสต็อกต่ำ</CardTitle>
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
                     </CardHeader>
                     <CardContent>
-                        {recentInvoices.length === 0 ? (
+                        {lowStockItems.length === 0 ? (
                             <div className="flex flex-col items-center justify-center p-8 text-muted-foreground">
-                                <DollarSign className="h-8 w-8 mb-2 opacity-50" />
-                                <p>ยังไม่มีรายการใบแจ้งหนี้</p>
+                                <Box className="h-8 w-8 mb-2 opacity-50" />
+                                <p>สต็อกสินค้าปกติทุกรายการ</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {recentInvoices.map((inv) => (
-                                    <div key={inv.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                                {lowStockItems.slice(0, 5).map((prod) => (
+                                    <div key={prod.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
                                         <div>
-                                            <div className="font-medium">{inv.number}</div>
-                                            <div className="text-xs text-muted-foreground">{inv.customerName}</div>
+                                            <div className="font-medium text-sm">{prod.name}</div>
+                                            <div className="text-xs text-muted-foreground">SKU: {prod.sku || "-"}</div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="font-medium">฿{inv.grandTotal.toLocaleString()}</div>
-                                            <div className={`text-xs ${inv.status === 'paid' ? 'text-green-600' :
-                                                    inv.status === 'overdue' ? 'text-red-500' : 'text-orange-500'
-                                                }`}>
-                                                {inv.status === 'paid' ? 'ชำระแล้ว' :
-                                                    inv.status === 'overdue' ? 'เกินกำหนด' : 'รอชำระ'}
-                                            </div>
+                                            <div className="font-bold text-red-600">{prod.stockQuantity} {prod.unit}</div>
+                                            <div className="text-[10px] text-muted-foreground">ต่ำกว่า {prod.minStockLevel}</div>
                                         </div>
                                     </div>
                                 ))}

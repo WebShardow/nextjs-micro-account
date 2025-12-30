@@ -43,6 +43,8 @@ const productSchema = z.object({
     price: z.coerce.number().min(0, "ราคาต้องไม่ต่ำกว่า 0"),
     unit: z.string().min(1, "กรุณาระบุหน่วยนับ"),
     description: z.string().optional(),
+    stockQuantity: z.coerce.number().min(0, "จำนวนต้องไม่ต่ำกว่า 0").default(0),
+    minStockLevel: z.coerce.number().min(0, "จำนวนต้องไม่ต่ำกว่า 0").default(0),
 });
 
 interface ProductDialogProps {
@@ -61,6 +63,8 @@ export function ProductDialog({ onSuccess }: ProductDialogProps) {
             price: 0,
             unit: "ชิ้น",
             description: "",
+            stockQuantity: 0,
+            minStockLevel: 0,
         },
     });
 
@@ -152,6 +156,35 @@ export function ProductDialog({ onSuccess }: ProductDialogProps) {
                                 </FormItem>
                             )}
                         />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="stockQuantity"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>จำนวนสต็อกตั้งต้น</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="minStockLevel"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>จุดแจ้งเตือนสินค้าใกล้หมด</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <FormField
                             control={form.control}

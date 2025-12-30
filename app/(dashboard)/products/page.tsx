@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -101,6 +102,7 @@ export default function ProductsPage() {
                             <TableHead>รายละเอียด</TableHead>
                             <TableHead className="text-right">ราคาต่อหน่วย</TableHead>
                             <TableHead className="text-center">หน่วยนับ</TableHead>
+                            <TableHead className="text-right">คงเหลือ</TableHead>
                             <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -133,6 +135,14 @@ export default function ProductsPage() {
                                     </TableCell>
                                     <TableCell className="text-center text-sm text-muted-foreground">
                                         {product.unit}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Badge
+                                            variant={product.stockQuantity <= (product.minStockLevel || 0) ? "destructive" : "secondary"}
+                                            className="font-bold"
+                                        >
+                                            {product.stockQuantity.toLocaleString()}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-1">
