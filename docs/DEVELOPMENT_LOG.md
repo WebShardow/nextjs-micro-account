@@ -65,6 +65,12 @@ app/
 - **Sidebar**: เมนูนำทางด้านซ้าย (Dashboard, Invoices, Expenses, Customers, Settings)
 - **Header**: แถบด้านบนแสดง User profile และ Notification
 - **Dashboard UI**: Mockup การ์ดแสดงผล (รายรับ, รายจ่าย, กำไร) และตารางรายการล่าสุด
+- **Dashboard UI**: Mockup การ์ดแสดงผล (รายรับ, รายจ่าย, กำไร) และตารางรายการล่าสุด
+
+### 5. Database Schema (Supabase)
+- **Defined SQL Schema**: `supabase/schema.sql` (ตาราง Customers, Invoices, Invoice Items)
+- **RLS Policies**: กำหนด Row Level Security เบื้องต้นเพื่อความปลอดภัยของข้อมูล
+- **Data Service**: สร้าง `lib/data-service.ts` เตรียมพร้อมสำหรับการเชื่อมต่อ API แทน Mock Data
 
 ---
 

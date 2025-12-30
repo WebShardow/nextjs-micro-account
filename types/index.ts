@@ -1,0 +1,68 @@
+export type Customer = {
+    id: string;
+    name: string;
+    taxId?: string; // เลขผู้เสียภาษี
+    address?: string;
+    email?: string;
+    phone?: string;
+    branch?: string; // สำนักงานใหญ่/สาขา
+    createdAt: Date;
+};
+
+export type Product = {
+    id: string;
+    name: string;
+    sku?: string;
+    price: number;
+    unit: string; // ชิ้น, กล่อง, ครั้ง
+    description?: string;
+};
+
+export type InvoiceStatus = 'draft' | 'issued' | 'paid' | 'overdue' | 'cancelled';
+
+export type InvoiceItem = {
+    id: string;
+    productId?: string;
+    description: string;
+    quantity: number;
+    price: number;
+    discount: number; // ส่วนลดต่อรายการ (บาท)
+    vatRate: number; // 0 or 7
+};
+
+export type Invoice = {
+    id: string;
+    number: string; // INV-2025-001
+    date: Date;
+    dueDate: Date;
+    customerId: string;
+    customerName: string; // Snapshot name at time of invoice
+    customerAddress?: string;
+    customerTaxId?: string;
+
+    items: InvoiceItem[];
+
+    // Totals
+    subtotal: number;
+    discountTotal: number;
+    vatTotal: number;
+    grandTotal: number;
+    whtTotal?: number; // หัก ณ ที่จ่าย
+
+    status: InvoiceStatus;
+    notes?: string;
+    createdAt: Date;
+};
+
+export type Expense = {
+    id: string;
+    date: Date;
+    description: string;
+    amount: number;
+    category?: string;
+    recipient?: string;
+    receiptUrl?: string;
+    userId?: string;
+    createdAt: Date;
+};
+

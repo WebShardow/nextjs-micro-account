@@ -1,0 +1,14 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    // Console error จะแสดงให้เห็นถ้าค่า env หาย
+    console.error('Missing Supabase Environment Variables');
+}
+
+export const supabase = createClient(
+    supabaseUrl || '', // Fallback to empty string to prevent crash during build, but will fail at runtime if missing
+    supabaseAnonKey || ''
+);

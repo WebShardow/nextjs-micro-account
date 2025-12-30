@@ -5,7 +5,8 @@ import {
     Users,
     ShoppingBag,
     Settings,
-    PieChart
+    PieChart,
+    LogOut
 } from "lucide-react";
 
 export function Sidebar() {
@@ -73,6 +74,14 @@ export function Sidebar() {
                     <Settings size={20} />
                     ตั้งค่า (Settings)
                 </Link>
+                <div onClick={async () => {
+                    const { supabase } = await import('@/lib/supabase');
+                    await supabase.auth.signOut();
+                    window.location.href = '/login';
+                }} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white cursor-pointer mt-2 text-red-400 hover:text-red-300">
+                    <LogOut size={20} />
+                    ออกจากระบบ (Logout)
+                </div>
             </div>
         </div>
     );
