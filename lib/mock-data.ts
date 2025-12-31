@@ -24,11 +24,11 @@ export const MOCK_CUSTOMERS: Customer[] = [
     {
         id: '3',
         name: 'ร้านกาแฟบ้านสวน',
-        taxId: null,
+        taxId: undefined,
         address: '789/12 ซอยอารีย์ แขวงสามเสนใน เขตพญาไท กรุงเทพมหานคร 10400',
         email: 'cafe@baansuan.com',
         phone: '089-123-4567',
-        branch: null,
+        branch: undefined,
         createdAt: new Date('2024-03-10')
     }
 ];
@@ -129,7 +129,7 @@ export const MOCK_INVOICES: Invoice[] = [
         vatTotal: 9975,
         grandTotal: 152475,
         status: 'issued',
-        notes: null,
+        notes: undefined,
         createdAt: new Date('2024-12-15'),
         items: [
             {
@@ -155,10 +155,7 @@ export const MOCK_EXPENSES: Expense[] = [
         category: 'rent',
         date: new Date('2024-12-01'),
         recipient: 'บริษัท อาคารสำนักงาน จำกัด',
-        receiptUrl: null,
-        paymentStatus: 'paid',
-        isReconciled: true,
-        whtAmount: 0,
+        receiptUrl: undefined,
         createdAt: new Date('2024-12-01')
     },
     {
@@ -170,10 +167,7 @@ export const MOCK_EXPENSES: Expense[] = [
         category: 'salary',
         date: new Date('2024-12-25'),
         recipient: 'พนักงานทุกคน',
-        receiptUrl: null,
-        paymentStatus: 'paid',
-        isReconciled: true,
-        whtAmount: 5400,
+        receiptUrl: undefined,
         createdAt: new Date('2024-12-25')
     },
     {
@@ -185,10 +179,7 @@ export const MOCK_EXPENSES: Expense[] = [
         category: 'shipping',
         date: new Date('2024-12-20'),
         recipient: 'Kerry Express',
-        receiptUrl: null,
-        paymentStatus: 'paid',
-        isReconciled: false,
-        whtAmount: 0,
+        receiptUrl: undefined,
         createdAt: new Date('2024-12-20')
     },
     {
@@ -200,10 +191,7 @@ export const MOCK_EXPENSES: Expense[] = [
         category: 'utilities',
         date: new Date('2024-12-10'),
         recipient: 'การไฟฟ้านครหลวง',
-        receiptUrl: null,
-        paymentStatus: 'paid',
-        isReconciled: true,
-        whtAmount: 0,
+        receiptUrl: undefined,
         createdAt: new Date('2024-12-10')
     }
 ];
@@ -217,12 +205,12 @@ export const MOCK_QUOTATIONS: Quotation[] = [
         customerId: '3',
         customerName: 'ร้านกาแฟบ้านสวน',
         customerAddress: '789/12 ซอยอารีย์ แขวงสามเสนใน เขตพญาไท กรุงเทพมหานคร 10400',
-        customerTaxId: null,
+        customerTaxId: undefined,
         subtotal: 89000,
         discountTotal: 4450,
         vatTotal: 5918.5,
         grandTotal: 90468.5,
-        status: 'pending',
+        status: 'sent',
         notes: 'ใบเสนอราคานี้มีอายุ 15 วัน',
         createdAt: new Date('2024-12-28'),
         items: [
